@@ -1,0 +1,6 @@
+---
+- name: k8s_worker_kubelet_systemd
+  systemd:
+    name: kubelet
+    state: restarted
+    daemon_reload: yes
