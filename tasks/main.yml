@@ -1,11 +1,11 @@
 ---
 - name: Create directories /etc/kubernetes/manifests
-  file: 
-    path: /etc/kubernetes/{{item}} 
-    state: directory 
-    mode: 0755 
+  file:
+    path: /etc/kubernetes/{{item}}
+    state: directory
+    mode: 0755
     recurse: no
-    owner: root 
+    owner: root
     group: root
   with_items: [ "manifests", "ssl" ]
 
@@ -26,6 +26,14 @@
     mode: 0644
   tags: kubernetes-config
 
+- name: proxy kubeconfig
+  template:
+    src: proxy-kubeconfig.yaml.j2
+    dest: /etc/kubernetes/proxy-kubeconfig.yaml
+    mode: 0644
+  tags: kubernetes-config
+
+
 - name: Kubelet systemd service
   template:
     src: kubelet.service.j2
@@ -36,7 +44,7 @@
   tags: kubelet
 
 - name: Kubelet start
-  systemd: 
+  systemd:
     name: kubelet
     enabled: yes
     state: started
