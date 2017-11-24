@@ -18,6 +18,7 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --cni-conf-dir=/etc/kubernetes/cni/net.d \
   --node-labels={{ node_labels|join(',') }} \
   --network-plugin={{ vars.kubernetes.network_plugin }} \
+  --pod-cidr={{ vars.kubernetes.pod_network }} \
   --container-runtime=docker \
   --register-node=true \
   --allow-privileged=true \
@@ -29,6 +30,7 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --kubeconfig=/etc/kubernetes/worker-kubeconfig.yaml \
   --tls-cert-file=/etc/kubernetes/ssl/worker.pem \
   --tls-private-key-file=/etc/kubernetes/ssl/worker-key.pem
+  --v=2
 ExecStop=-/usr/bin/rkt stop --uuid-file=/var/run/kubelet-pod.uuid
 Restart=always
 RestartSec=10
