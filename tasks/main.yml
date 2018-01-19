@@ -26,13 +26,19 @@
     mode: 0644
   tags: kubernetes-config
 
+- name: write kubelet-kubeconfig.yaml
+  template:
+    src: kubelet-kubeconfig.yaml.j2
+    dest: /etc/kubernetes/kubelet-kubeconfig.yaml
+    mode: 0644
+  tags: kubernetes-config
+
 - name: proxy kubeconfig
   template:
     src: proxy-kubeconfig.yaml.j2
     dest: /etc/kubernetes/proxy-kubeconfig.yaml
     mode: 0644
   tags: kubernetes-config
-
 
 - name: Kubelet systemd service
   template:
