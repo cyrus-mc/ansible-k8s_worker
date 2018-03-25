@@ -54,3 +54,37 @@
     name: kubelet
     enabled: yes
     state: started
+
+# auto-scaling groups don't propagate tags to volumes, so lets do that outselves
+
+# first filter out any tags that start with aws: as that is reserved by Amazon
+- set_fact:
+    tags: '{{ k8s_worker_tags }}'
+    filtered_tags: {}
+
+- set_fact:
+    filtered_tags: "{{ filtered_tags | combine({ item.key: item.value }) }}"
+  when: "not item.key | match('^aws:*')"
+  with_dict: "{{ tags }}"
+
+- name: gather ec2 facts
+  ec2_metadata_facts:
+  register: ec2_facts
+
+- name: retrieve all volumes for instance
+  ec2_vol:
+    instance: '{{ ansible_ec2_instance_id }}'
+    region: '{{ ansible_ec2_placement_region }}'
+    state: list
+  register: ec2_vol
+
+# tag all volumes that were not created by Kubernetes
+- name: tag all volumes with instance tags
+  ec2_tag:
+    region: '{{ ansible_ec2_placement_region }}'
+    resource: '{{ item.id }}'
+    state: present
+    tags: "{{ filtered_tags }}"
+  with_items:
+  - '{{ ec2_vol.volumes }}'
+  when: "'kubernetes.io/created-for/pvc/name' not in item.tags"
