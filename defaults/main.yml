@@ -7,3 +7,4 @@ k8s_worker_pod_network: 10.2.0.0/16
 k8s_worker_dns_service: 10.3.0.10
 
 k8s_worker_tags: {}
+k8s_worker_labels: {}

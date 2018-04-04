@@ -1,5 +1,5 @@
 {% set node_labels = [] %}
-{% for label, value in ansible_local.k8s_facts.labels.iteritems() %}
+{% for label, value in ( k8s_worker_labels | from_yaml ).iteritems() %}
 {% set new_label = "%s=%s" % (label, value) %}
 {% set _ = node_labels.append(new_label) %}
 {% endfor %}
